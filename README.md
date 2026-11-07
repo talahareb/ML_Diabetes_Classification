@@ -1,35 +1,71 @@
 # Diabetes Classification | Machine Learning & Data Analytics
 
-**An end-to-end supervised learning project for classifying diabetes status using demographic information and symptom indicators.**
+**An end-to-end machine learning project that analyzes patient symptoms and demographic information to classify diabetes status, compare five modeling approaches, and present predictions through an interactive web application.**
 
-**Project area:** Machine Learning · Data Analytics · Classification · Model Evaluation  
+**Project area:** Machine Learning · Data Analytics · Supervised Classification · Model Evaluation  
 **Technologies:** Python · pandas · scikit-learn · imbalanced-learn · Matplotlib · Flask  
-**Academic context:** Lebanese American University (LAU) · Consolidated ML and Business Data Analytics group coursework
+**Academic context:** Lebanese American University (LAU) · Group coursework
 
-![Interactive classification web app, displaying a model prediction](docs/images/app-preview.png)
+![Diabetes classification web application](docs/images/app-preview.png)
 
-## Overview
+## Project overview
 
-This repository combines the most useful work from two related LAU course projects into one reproducible machine learning workflow. It covers exploratory data analysis, duplicate detection, feature encoding, multiple classification algorithms, class-imbalance handling, model evaluation, explainability plots, and an interactive Flask demonstration.
+The goal of this project is to build and evaluate a **binary classification system** using demographic and symptom-based data. Given information such as age, frequent urination, excessive thirst, and other reported symptoms, the system estimates whether a record belongs to the dataset's **Positive** or **Negative** diabetes class.
 
-The problem is to **classify the positive/negative diabetes label in a symptom-based dataset**. The dataset does not contain future diabetes-onset outcomes, so the model is **not a predictor of future disease or a clinical diagnostic system**.
+The work follows a complete data science workflow, from exploring and preparing raw data to training classifiers, comparing their performance, interpreting predictions, and providing a usable web interface.
 
-## Key features
+**Five machine learning approaches were evaluated:** Logistic Regression, Decision Tree, Random Forest, a Soft Voting Ensemble, and Random Forest with SMOTENC oversampling.
 
-- **Data preparation:** inspect missing values, remove exact duplicate rows before the train/test split, encode categorical attributes, and analyze class balance.
-- **Model comparison:** Logistic Regression, Decision Tree, Random Forest, and Soft Voting Ensemble.
-- **Imbalance experiment:** Random Forest with SMOTENC, which resamples categorical and numeric training features without touching the test set.
-- **Evaluation:** stratified five-fold cross-validation, accuracy, balanced accuracy, precision, recall, F1-score, ROC–AUC, and confusion matrix.
-- **Interpretation:** permutation feature importance, exploratory correlation heatmap, and a sample tree from the forest.
-- **Web demo:** an interactive Flask form for all 16 features with the predicted class and corresponding positive-class probability.
+## Project workflow
 
-## Dataset and evaluation
+1. **Explore the dataset** — inspect feature types, missing values, class distribution, duplicates, and correlations.
+2. **Prepare the data** — remove duplicate records, encode categorical variables, and build a stratified training/test split.
+3. **Train five approaches** — compare linear, tree-based, ensemble, and class-balancing methods.
+4. **Evaluate performance** — use stratified cross-validation and an untouched holdout set to measure generalization.
+5. **Interpret results** — generate feature importance, confusion matrix, ROC curve, and other visualizations.
+6. **Deploy a demonstration** — connect the selected trained classifier to a Flask web application.
 
-The supplied dataset contains **520 rows and 17 columns** (16 predictors plus one label). Removing **269 exact duplicate rows** leaves **251 distinct records** (173 positive, 78 negative). The consolidated evaluation uses an 80/20 stratified split: **200 training records, 51 held-out records**. The same split is used for all approaches.
+## Dataset and preprocessing
 
-Model selection is based on **mean balanced accuracy across five stratified folds of the training set**, not on choosing whichever model scores highest on the holdout set.
+The dataset includes **16 input features** and one binary target label. The inputs cover age, gender, and symptom indicators such as polyuria, polydipsia, sudden weight loss, weakness, visual blurring, and obesity.
 
-| Model | Training CV balanced accuracy | Holdout accuracy | Holdout balanced accuracy |
+| Dataset property | Value |
+|---|---:|
+| Original records | 520 |
+| Exact duplicate records removed | 269 |
+| Unique records used | 251 |
+| Input features | 16 |
+| Training records | 200 |
+| Test records | 51 |
+| Positive / Negative records | 173 / 78 |
+
+Preprocessing checks for missing values and unexpected categories, removes **exact duplicates before the data split**, and encodes categorical features numerically. An **80/20 stratified split** preserves the class proportions across training and test sets.
+
+![Dataset profile and class distribution](docs/images/dataset-profile.png)
+
+### Exploratory data analysis
+
+The project examines class imbalance and relationships among the variables using distribution plots and a correlation heatmap. These visualizations help identify useful patterns and understand the dataset before modeling.
+
+![Correlation heatmap of dataset features](docs/images/correlation-heatmap.png)
+
+## Machine learning models
+
+The following five approaches were trained and compared:
+
+| Approach | Purpose |
+|---|---|
+| **Logistic Regression** | Establish a linear classification baseline. |
+| **Decision Tree** | Learn interpretable, rule-based decision boundaries. |
+| **Random Forest** | Combine decision trees to capture nonlinear relationships. |
+| **Soft Voting Ensemble** | Combine Logistic Regression, Decision Tree, and Random Forest probability estimates. |
+| **Random Forest + SMOTENC** | Explore the effect of balancing the minority class using synthetic training samples. |
+
+**Model evaluation:** Each approach is assessed using five-fold stratified cross-validation on the training set. Performance is measured with accuracy, balanced accuracy, precision, recall, F1-score, ROC–AUC, and a confusion matrix. The SMOTENC approach resamples **training data only**, including within cross-validation folds, to avoid leakage into evaluation data.
+
+## Results and model comparison
+
+| Model | CV balanced accuracy | Test accuracy | Test balanced accuracy |
 |---|---:|---:|---:|
 | Logistic Regression | 88.1% | 80.4% | 82.3% |
 | Decision Tree | 85.0% | 76.5% | 81.2% |
@@ -37,31 +73,46 @@ Model selection is based on **mean balanced accuracy across five stratified fold
 | Soft Voting Ensemble | 88.2% | 86.3% | 88.3% |
 | Random Forest + SMOTENC | 89.4% | 92.2% | 92.6% |
 
-**Selected model:** Random Forest. On the holdout set it achieved **90.2% accuracy**, **92.8% positive-class F1**, and **96.3% ROC–AUC** (rounded). The SMOTENC variant happened to obtain a higher holdout accuracy, but was *not* selected because its training cross-validation balanced accuracy was lower.
+**Random Forest was selected** because it achieved the highest average cross-validation balanced accuracy on the training data. On the held-out test set, it achieved:
 
-The holdout set is small and results should be interpreted cautiously. The experiments are **educational**, with no independent external or clinical validation.
+- **90.2% accuracy**
+- **92.8% positive-class F1-score**
+- **96.3% ROC–AUC**
 
-### Model comparison
+The SMOTENC experiment scored higher on this particular test split (**92.2% accuracy**) but had slightly lower training cross-validation balanced accuracy, so it was not selected as the final model.
 
-![Comparison of cross-validation and holdout balanced accuracy](docs/images/model-comparison.png)
+![Comparison of machine learning models](docs/images/model-comparison.png)
 
-### Confusion matrix and ROC curve
+### Classification performance
 
-| Holdout confusion matrix | ROC curve |
+| Confusion matrix | ROC curve |
 |---|---|
-| ![Confusion matrix](docs/images/confusion-matrix.png) | ![ROC curve](docs/images/roc-curve.png) |
+| ![Random Forest confusion matrix](docs/images/confusion-matrix.png) | ![Random Forest ROC curve](docs/images/roc-curve.png) |
 
-### Feature importance
+### Feature importance and model interpretation
 
-![Feature permutation importance](docs/images/feature-importance.png)
+Permutation feature importance helps explore which input variables contribute most to the trained model's predictive performance. A sample decision-tree visualization is also included to illustrate tree-based decision rules.
 
-Feature importance describes predictive associations in this dataset, **not causal effects**. Additional visualizations, including a correlation heatmap, decision-tree preview, class distribution, and screenshots of the application, are available in [`docs/images/`](docs/images/).
+![Permutation feature importance](docs/images/feature-importance.png)
+
+![Sample decision tree](docs/images/decision-tree-preview.png)
+
+## Interactive Flask application
+
+The Flask web app provides a form where users can enter an age, select a gender, and answer symptom-based Yes/No questions. The application then:
+
+- Validates the entered information.
+- Applies the same feature representation used during training.
+- Runs the selected Random Forest model.
+- Displays the predicted **Positive** or **Negative** class and the model's estimated positive-class probability.
+
+![Interactive prediction page](docs/images/app-prediction.png)
 
 ## Run locally
 
-**Requirements:** Python 3.10 or newer and an internet connection to install Python packages.
+**Requirements:** Python 3.10 or newer.
 
-**1. Create and activate an environment**
+**1. Install dependencies**
 
 Windows (PowerShell):
 
@@ -79,24 +130,22 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**2. Verify and (optionally) regenerate models and figures**
+**2. Run the tests and reproduce the training results (optional)**
 
 ```bash
 python tests.py
 python train.py
 ```
 
-The ZIP already contains the trained model and plots; `python train.py` regenerates them with your installed package versions. Models saved with `joblib` may require retraining when scikit-learn versions differ. Only load artifacts from sources you trust.
+The repository already includes a fitted model, evaluation figures, and an executed notebook. Running `train.py` regenerates the model and figures for your installed environment.
 
-**3. Launch the Flask web application**
+**3. Launch the web app**
 
 ```bash
 python app.py
 ```
 
-Open **http://127.0.0.1:5000** in your browser and fill in the form. A sample output is shown below.
-
-![Full-page application screenshot with sample classification](docs/images/app-prediction.png)
+Open **http://127.0.0.1:5000** in your browser.
 
 **4. Explore the notebook (optional)**
 
@@ -104,35 +153,30 @@ Open **http://127.0.0.1:5000** in your browser and fill in the form. A sample ou
 jupyter notebook notebooks/Consolidated_Diabetes_Classification.ipynb
 ```
 
-The notebook is stored with executed outputs and can be opened directly in GitHub.
-
 ## Repository structure
 
 ```text
 Diabetes-Classification-ML/
-├── README.md                         Project documentation
-├── ACKNOWLEDGMENTS.md               Original academic teams and dataset attribution
-├── train.py                         Reproducible comparison and figures
-├── app.py                           Flask form and inference
-├── tests.py                         Basic data/model checks
-├── requirements.txt                 Python dependencies
-├── data/
-│   └── diabetes_risk.csv            Original supplied dataset
-├── src/
-│   ├── modeling.py                  Data preparation + model definitions
-│   └── predict.py                   Minimal inference example
-├── models/
-│   ├── diabetes_model.joblib        Fitted selected model
-│   ├── metadata.json                Evaluation and data profile
-│   └── model_comparison.csv         Full metric comparison
-├── notebooks/
-│   └── Consolidated_Diabetes_Classification.ipynb
-├── templates/                       Web-app HTML
-├── static/                          CSS + original project background image
-├── docs/images/                     Actual UI screenshots and evaluated plots
-└── archive/                          Original ML/BDA notebooks, reports, presentation
+├── README.md
+├── ACKNOWLEDGMENTS.md
+├── app.py                        # Flask application
+├── train.py                      # Model training and evaluation
+├── tests.py                      # Basic checks
+├── requirements.txt
+├── data/                         # Dataset
+├── src/                          # Preprocessing, models, inference
+├── models/                       # Fitted classifier and evaluation results
+├── notebooks/                    # Executed analysis notebook
+├── templates/                    # Web application HTML
+├── static/                       # Styles and assets
+├── docs/images/                  # Screenshots and analysis figures
+└── archive/                       # Original coursework reference files
 ```
 
+## Credits and notes
 
+Developed as group coursework at **Lebanese American University**. Original contributors, academic context, and data attribution are documented in [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
 
-**Dataset source, as cited in the reports:** [Diabetes Risk Prediction on Kaggle](https://www.kaggle.com/datasets/rcratos/diabetes-risk-prediction/data). 
+**Dataset:** [Diabetes Risk Prediction — Kaggle](https://www.kaggle.com/datasets/rcratos/diabetes-risk-prediction/data).
+
+**Scope:** The dataset describes diabetes status rather than future onset. This is an educational classification demonstration, not a clinically validated diagnostic or screening tool. Results are based on a small holdout set and should not be used for medical decisions.
