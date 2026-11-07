@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Diabetes status classification — an undergraduate machine learning project demo.">
+  <title>Diabetes Classification · ML Project</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Project home"><span class="brand-logo">ML</span><span>DIABETES <b>CLASSIFICATION</b></span></a>
+      <span class="header-subtitle">LAU · Machine Learning &amp; Data Analytics</span>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero" aria-label="Project introduction">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="dot"></span> APPLIED MACHINE LEARNING PROJECT</div>
+        <h1>Diabetes status <em>classification</em></h1>
+        <p>An interactive demonstration of a supervised-learning workflow based on demographic information and self-reported symptoms.</p>
+        <div class="hero-chips"><span>{{ model_name }}</span><span>16 input features</span><span>{{ record_count }} distinct records</span></div>
+      </div>
+      <div class="hero-illustration" aria-hidden="true"><div class="hero-lines"><span>DATA</span><span>MODEL</span><span>RESULT</span></div></div>
+    </section>
+
+    <div class="main-grid">
+      <section class="form-card" aria-labelledby="form-heading">
+        <div class="section-top">
+          <div><p class="section-index">01 / INPUT FEATURES</p><h2 id="form-heading">Explore a prediction</h2></div>
+          <span class="info-chip">Demo only</span>
+        </div>
+        <p class="section-lead">Enter an age and select the reported symptoms. Every input corresponds to a feature in the original dataset.</p>
+        {% if error %}<div class="alert alert-error" role="alert">{{ error }}</div>{% endif %}
+        {% if prediction %}
+        <div class="result result-{{ prediction|lower }}" role="status" id="prediction-result">
+          <div><div class="result-eyebrow">MODEL OUTPUT</div><div class="result-title">{{ prediction }} classification</div>
+          <p>Estimated probability for the <strong>positive</strong> dataset class: <strong>{{ probability }}%</strong></p></div>
+          <div class="result-number">{{ probability }}<small>%</small></div>
+        </div>
+        {% endif %}
+        <form action="/predict" method="post">
+          <div class="field-title">PERSONAL INFORMATION</div>
+          <div class="field-grid">
+            <label class="field" for="age"><span>Age (years)</span><input id="age" type="number" name="age" required min="1" max="120" placeholder="e.g. 45" value="{{ values.get('age','') if values else '' }}"></label>
+            <label class="field" for="gender"><span>Gender (source dataset)</span><select id="gender" name="gender" required><option value="Male" {% if values and values.get('gender')=='Male' %}selected{% endif %}>Male</option><option value="Female" {% if values and values.get('gender')=='Female' %}selected{% endif %}>Female</option></select></label>
+          </div>
+          <div class="field-title symptoms-title">SYMPTOMS &amp; OBSERVATIONS</div>
+          <div class="field-grid">
+            {% set fields = [
+              ('polyuria', 'Polyuria', 'Frequent urination'),
+              ('polydipsia', 'Polydipsia', 'Excessive thirst'),
+              ('sudden_weight_loss', 'Sudden weight loss', 'Unexplained weight loss'),
+              ('weakness', 'Weakness', 'Fatigue or weakness'),
+              ('polyphagia', 'Polyphagia', 'Excessive hunger'),
+              ('genital_thrush', 'Genital thrush', 'Fungal infection'),
+              ('visual_blurring', 'Visual blurring', 'Blurred vision'),
+              ('itching', 'Itching', 'Itchy skin'),
+              ('irritability', 'Irritability', 'Increased irritability'),
+              ('delayed_healing', 'Delayed healing', 'Slow healing of wounds'),
+              ('partial_paresis', 'Partial paresis', 'Partial muscle weakness'),
+              ('muscle_stiffness', 'Muscle stiffness', 'Stiff muscles'),
+              ('alopecia', 'Alopecia', 'Hair loss'),
+              ('obesity', 'Obesity', 'Reported obesity')
+            ] %}
+            {% for key, label, subtitle in fields %}
+            <label class="field" for="{{ key }}"><span>{{ label }}</span><small>{{ subtitle }}</small><select id="{{ key }}" name="{{ key }}" required><option value="0" {% if not values or values.get(key) != '1' %}selected{% endif %}>No</option><option value="1" {% if values and values.get(key) == '1' %}selected{% endif %}>Yes</option></select></label>
+            {% endfor %}
+          </div>
+          <div class="form-bottom"><p><span class="check-mark">✓</span> All predictions are generated locally from the included model.</p><button type="submit">Run classification <span aria-hidden="true">→</span></button></div>
+        </form>
+      </section>
+
+      <aside class="aside-column">
+        <section class="aside-card"><p class="section-index">02 / HOW IT WORKS</p><h2>The model pipeline</h2>
+          <ol class="steps"><li><b>Prepare</b><span>Remove duplicate records and encode categorical features.</span></li><li><b>Train &amp; compare</b><span>Evaluate five supervised-learning approaches.</span></li><li><b>Validate</b><span>Select via five-fold cross-validation and report a held-out test score.</span></li><li><b>Predict</b><span>Use the saved fitted model on new form inputs.</span></li></ol>
+        </section>
+        <section class="aside-card results-card"><p class="section-index">03 / VERIFIED EVALUATION</p><h2>Holdout results</h2><div class="metric-row"><div><strong>{{ holdout_accuracy }}<span>%</span></strong><small>Accuracy · selected model</small></div><div><strong>51</strong><small>Holdout records</small></div></div><p class="data-note">The model was selected using cross-validation, not test-set accuracy. Scores describe this dataset only.</p></section>
+        <section class="aside-card notice"><p class="notice-title">Educational use only</p><p>This demonstration predicts a class in an existing dataset, not future diabetes onset. It has not been externally or clinically validated and must not guide medical decisions.</p></section>
+      </aside>
+    </div>
+    <footer>LAU coursework · Consolidated ML + BDA portfolio edition · Dataset attribution and reproducibility details in README.md</footer>
+  </main>
+</body>
+</html>

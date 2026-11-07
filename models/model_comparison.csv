@@ -1,0 +1,6 @@
+model,cv_balanced_accuracy_mean,cv_balanced_accuracy_std,accuracy,balanced_accuracy,precision_positive,recall_positive,f1_positive,roc_auc
+Logistic Regression,0.881,0.0283,0.8039,0.8232,0.931,0.7714,0.8438,0.9196
+Decision Tree,0.8495,0.0248,0.7647,0.8116,0.96,0.6857,0.8,0.8741
+Random Forest,0.898,0.0384,0.902,0.8946,0.9412,0.9143,0.9275,0.9625
+Soft Voting Ensemble,0.8824,0.0202,0.8627,0.883,0.9667,0.8286,0.8923,0.95
+Random Forest + SMOTENC,0.8936,0.0297,0.9216,0.9259,0.9697,0.9143,0.9412,0.9589

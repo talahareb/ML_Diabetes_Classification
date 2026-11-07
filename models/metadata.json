@@ -1,0 +1,82 @@
+{
+  "raw_rows": 520,
+  "duplicate_rows": 269,
+  "unique_rows": 251,
+  "unique_class_counts": {
+    "Negative": 78,
+    "Positive": 173
+  },
+  "train_rows": 200,
+  "test_rows": 51,
+  "random_seed": 42,
+  "selected_model": "Random Forest",
+  "selection_method": "highest 5-fold stratified training CV balanced accuracy",
+  "holdout_confusion_matrix_negative_positive": [
+    [
+      14,
+      2
+    ],
+    [
+      3,
+      32
+    ]
+  ],
+  "model_results": [
+    {
+      "model": "Logistic Regression",
+      "cv_balanced_accuracy_mean": 0.881,
+      "cv_balanced_accuracy_std": 0.0283,
+      "accuracy": 0.8039,
+      "balanced_accuracy": 0.8232,
+      "precision_positive": 0.931,
+      "recall_positive": 0.7714,
+      "f1_positive": 0.8438,
+      "roc_auc": 0.9196
+    },
+    {
+      "model": "Decision Tree",
+      "cv_balanced_accuracy_mean": 0.8495,
+      "cv_balanced_accuracy_std": 0.0248,
+      "accuracy": 0.7647,
+      "balanced_accuracy": 0.8116,
+      "precision_positive": 0.96,
+      "recall_positive": 0.6857,
+      "f1_positive": 0.8,
+      "roc_auc": 0.8741
+    },
+    {
+      "model": "Random Forest",
+      "cv_balanced_accuracy_mean": 0.898,
+      "cv_balanced_accuracy_std": 0.0384,
+      "accuracy": 0.902,
+      "balanced_accuracy": 0.8946,
+      "precision_positive": 0.9412,
+      "recall_positive": 0.9143,
+      "f1_positive": 0.9275,
+      "roc_auc": 0.9625
+    },
+    {
+      "model": "Soft Voting Ensemble",
+      "cv_balanced_accuracy_mean": 0.8824,
+      "cv_balanced_accuracy_std": 0.0202,
+      "accuracy": 0.8627,
+      "balanced_accuracy": 0.883,
+      "precision_positive": 0.9667,
+      "recall_positive": 0.8286,
+      "f1_positive": 0.8923,
+      "roc_auc": 0.95
+    },
+    {
+      "model": "Random Forest + SMOTENC",
+      "cv_balanced_accuracy_mean": 0.8936,
+      "cv_balanced_accuracy_std": 0.0297,
+      "accuracy": 0.9216,
+      "balanced_accuracy": 0.9259,
+      "precision_positive": 0.9697,
+      "recall_positive": 0.9143,
+      "f1_positive": 0.9412,
+      "roc_auc": 0.9589
+    }
+  ],
+  "evaluation_note": "Classify diabetes status (not onset); results are illustrative and not medically validated."
+}
